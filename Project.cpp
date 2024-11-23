@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MacUILib.h"
 #include "objPos.h"
+#include "Player.h"git 
 
 using namespace std;
 
@@ -15,7 +16,8 @@ void DrawScreen(void);
 void LoopDelay(void);
 void CleanUp(void);
 
-
+Player* myPlayer;
+GameMechs* myMech;
 
 int main(void)
 {
@@ -41,59 +43,52 @@ void Initialize(void)
     MacUILib_clearScreen();
 
     exitFlag = false;
+    myMech = new GameMechs();
+    myPlayer = new Player(myMech);
 }
 
 void GetInput(void)
 {
-   
+   if (MacUILib_hasChar())
+    {
+        myMech->setInput(MacUILib_getChar());
+    }
 }
 
 void RunLogic(void)
 {
-    
+    myPlayer->updatePlayerDir();
+    myPlayer->movePlayer();
 }
+
 //Copied and Pasted from PPA3
 void DrawScreen(void)
 {
     MacUILib_clearScreen();
     int i, j, k;
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < myMech->getBoardSizeY(); i++)
     {
-        for (j = 0; j < 20; j++)
+        for (j = 0; j < myMech->getBoardSizeX(); j++)
         {
-            if (i == 0 || i == 10 - 1 || j == 0 || j == 20 - 1)
+            if (i == 0 || i == myMech->getBoardSizeY() - 1 || j == 0 || j == myMech->getBoardSizeX() - 1)
             {
                 MacUILib_printf("#");
             }
-            else if (i == 3 && j == 5)
-            {
-                MacUILib_printf("+");
-            }
-            
-            // else if (i == player.y && j == player.x)
+            // else if (i == 3 && j == 5)
             // {
-            //     MacUILib_printf("%c", player.symbol);
+            //     MacUILib_printf("+");
             // }
-            // else
-            // {
-            //     int foundItem = 0;
-            //     for (k = 0; k < 5; k++)
-            //     {
-            //         if (i == itemList[k].y && j == itemList[k].x)
-            //         {
-            //             MacUILib_printf("%c", itemList[k].symbol);
-            //             foundItem = 1;
-            //             break;
-            //         }
-            //     }
+            else if (i == myPlayer->getPlayerPos().getObjPos().pos->y && j == myPlayer->getPlayerPos().getObjPos().pos->x)
+            {
+                MacUILib_printf("%c", myPlayer->getPlayerPos().getObjPos().symbol);
+            }
             else 
             {
                 MacUILib_printf(" ");
             }
-            // } 
         }
         MacUILib_printf("\n");
-    }    
+    }
 }
 
 void LoopDelay(void)
