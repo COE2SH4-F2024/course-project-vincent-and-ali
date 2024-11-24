@@ -1,7 +1,6 @@
 #include "Player.h"
 
-
-Player::Player(GameMechs* thisGMRef)
+Player::Player(GameMechs *thisGMRef)
 {
     mainGameMechsRef = thisGMRef;
     myDir = STOP;
@@ -13,7 +12,6 @@ Player::Player(GameMechs* thisGMRef)
     // playerPos.pos->y = 5;
     playerPos.symbol = '*';
 }
-
 
 Player::~Player()
 {
@@ -30,54 +28,61 @@ void Player::updatePlayerDir()
 {
     // PPA3 input processing logic
     char input = mainGameMechsRef->getInput();
-    if(input != 0)  // if not null character
+    if (input != 0) // if not null character
     {
-        switch(input)
-        {                      
-            case ' ':  // exit
-                // exitMessage = "YOU DID NOT FINISH THE GAME :(";
-                mainGameMechsRef->setExitTrue();
-    
-                break;   
-            case 'W':
-            case 'w':
-                if (myDir != DOWN)
-                    myDir = UP;
-                    
-                break;
-            case 'S':
-            case 's':
-                if (myDir != UP)
-                    myDir = DOWN;
-                    
-                break;
-            case 'A':
-            case 'a':
-                if (myDir != RIGHT)
-                    myDir = LEFT;
-                    
-                break;
-            case 'D':
-            case 'd':
-                if (myDir != LEFT)
-                    myDir = RIGHT;
-                    
-                break;
-            // case 9:
-            //     if (playerSpeed == EXTREME)
-            //     {
-            //         playerSpeed = SLOW;  // Loop back to the slowest
-            //     } 
-            //     else
-            //     {
-            //         playerSpeed = (enum SpeedLevel)(playerSpeed - 1);  // Move to faster speed level
-            //     }
-            default:
-                break;
+        switch (input)
+        {
+        case ' ': // exit
+            // exitMessage = "YOU DID NOT FINISH THE GAME :(";
+            mainGameMechsRef->setExitTrue();
+
+            break;
+        case 27: // loseFlag:
+            mainGameMechsRef->setLoseFlag();
+            break;
+
+        case 49: // increment score
+            mainGameMechsRef->incrementScore();
+            break;
+
+        case 'W':
+        case 'w':
+            if (myDir != DOWN)
+                myDir = UP;
+
+            break;
+        case 'S':
+        case 's':
+            if (myDir != UP)
+                myDir = DOWN;
+
+            break;
+        case 'A':
+        case 'a':
+            if (myDir != RIGHT)
+                myDir = LEFT;
+
+            break;
+        case 'D':
+        case 'd':
+            if (myDir != LEFT)
+                myDir = RIGHT;
+
+            break;
+        // case 9:
+        //     if (playerSpeed == EXTREME)
+        //     {
+        //         playerSpeed = SLOW;  // Loop back to the slowest
+        //     }
+        //     else
+        //     {
+        //         playerSpeed = (enum SpeedLevel)(playerSpeed - 1);  // Move to faster speed level
+        //     }
+        default:
+            break;
         }
         mainGameMechsRef->clearInput();
     }
-    
 }
 
 void Player::movePlayer()
@@ -86,7 +91,7 @@ void Player::movePlayer()
     switch (myDir)
     {
     case UP:
-        playerPos.pos->y = (playerPos.pos->y -2 + (mainGameMechsRef->getBoardSizeY() - 2)) % (mainGameMechsRef->getBoardSizeY() - 2) + 1; 
+        playerPos.pos->y = (playerPos.pos->y - 2 + (mainGameMechsRef->getBoardSizeY() - 2)) % (mainGameMechsRef->getBoardSizeY() - 2) + 1;
         break;
     case DOWN:
         playerPos.pos->y = (playerPos.pos->y % (mainGameMechsRef->getBoardSizeY() - 2)) + 1;
@@ -104,7 +109,7 @@ void Player::movePlayer()
     if (myDir != STOP)
     {
         // moveCount++;
-    }          
+    }
 }
 
 // More methods to be added

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "MacUILib.h"
 #include "objPos.h"
-#include "Player.h"git 
+#include "Player.h"
 
 using namespace std;
 
@@ -16,15 +16,15 @@ void DrawScreen(void);
 void LoopDelay(void);
 void CleanUp(void);
 
-Player* myPlayer;
-GameMechs* myMech;
+Player *myPlayer;
+GameMechs *myMech;
 
 int main(void)
 {
 
     Initialize();
 
-    while(exitFlag == false)  
+    while (exitFlag == false)
     {
         GetInput();
         RunLogic();
@@ -33,9 +33,7 @@ int main(void)
     }
 
     CleanUp();
-
 }
-
 
 void Initialize(void)
 {
@@ -49,7 +47,7 @@ void Initialize(void)
 
 void GetInput(void)
 {
-   if (MacUILib_hasChar())
+    if (MacUILib_hasChar())
     {
         myMech->setInput(MacUILib_getChar());
     }
@@ -57,11 +55,17 @@ void GetInput(void)
 
 void RunLogic(void)
 {
+
     myPlayer->updatePlayerDir();
     myPlayer->movePlayer();
+    exitFlag = myMech->getExitFlagStatus();
+    if (myMech->getLoseFlagStatus() == true)
+    {
+        exitFlag = true;
+    }
 }
 
-//Copied and Pasted from PPA3
+// Copied and Pasted from PPA3
 void DrawScreen(void)
 {
     MacUILib_clearScreen();
@@ -82,12 +86,23 @@ void DrawScreen(void)
             {
                 MacUILib_printf("%c", myPlayer->getPlayerPos().getObjPos().symbol);
             }
-            else 
+            else
             {
                 MacUILib_printf(" ");
             }
         }
         MacUILib_printf("\n");
+    }
+
+    MacUILib_printf("Score: %d \n", myMech->getScore());
+
+    if (myMech->getLoseFlagStatus() == true)
+    {
+        MacUILib_printf("YOU LOST THE GAME \n");
+    }
+    else if (exitFlag == true)
+    {
+        MacUILib_printf("YOU DID NOT FINISH THE GAME :( \n");
     }
 }
 
@@ -96,10 +111,9 @@ void LoopDelay(void)
     MacUILib_Delay(DELAY_CONST); // 0.1s delay
 }
 
-
 void CleanUp(void)
 {
-    MacUILib_clearScreen();    
-
     MacUILib_uninit();
+    delete myMech;
+    delete myPlayer;
 }
