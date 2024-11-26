@@ -78,18 +78,34 @@ void DrawScreen(void)
             {
                 MacUILib_printf("#");
             }
-            // else if (i == 3 && j == 5)
-            // {
-            //     MacUILib_printf("+");
-            // }
-            else if (i == myPlayer->getPlayerPos().getObjPos().pos->y && j == myPlayer->getPlayerPos().getObjPos().pos->x)
-            {
-                MacUILib_printf("%c", myPlayer->getPlayerPos().getObjPos().symbol);
-            }
             else
             {
-                MacUILib_printf(" ");
+                bool isSnake = false;
+                for (int k = 0; k < myPlayer->getPlayerPos()->getSize(); k++)
+                {
+                    if (i == myPlayer->getPlayerPos()->getElement(k).pos->y && j == myPlayer->getPlayerPos()->getElement(k).pos->x)
+                    {
+                        MacUILib_printf("%c", myPlayer->getPlayerPos()->getHeadElement().symbol);
+                        isSnake = true;
+                        break;
+                    }
+                }
+                if (!isSnake)
+                {
+                    MacUILib_printf(" ");
+                }
+                
+                
             }
+
+            // else if (i == myPlayer->getPlayerPos()->getHeadElement().pos->y && j == myPlayer->getPlayerPos()->getHeadElement().pos->x)
+            // {
+            //     MacUILib_printf("%c", myPlayer->getPlayerPos()->getHeadElement().symbol);
+            // }
+            // else
+            // {
+            //     MacUILib_printf(" ");
+            // }
         }
         MacUILib_printf("\n");
     }
