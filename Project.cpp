@@ -2,6 +2,7 @@
 #include "MacUILib.h"
 #include "objPos.h"
 #include "Player.h"
+#include "Food.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ void DrawScreen(void);
 void LoopDelay(void);
 void CleanUp(void);
 
+Food *food;
 Player *myPlayer;
 GameMechs *myMech;
 
@@ -43,6 +45,8 @@ void Initialize(void)
     exitFlag = false;
     myMech = new GameMechs();
     myPlayer = new Player(myMech);
+    food = new Food(*myMech);
+    food->generateFood(myPlayer->getPlayerPos()); // generate new food
 }
 
 void GetInput(void)
@@ -55,7 +59,10 @@ void GetInput(void)
 
 void RunLogic(void)
 {
-
+    if (myMech->getInput() == 50)
+    {
+        food->generateFood(myPlayer->getPlayerPos());
+    }
     myPlayer->updatePlayerDir();
     myPlayer->movePlayer();
     exitFlag = myMech->getExitFlagStatus();
@@ -78,10 +85,10 @@ void DrawScreen(void)
             {
                 MacUILib_printf("#");
             }
-            // else if (i == 3 && j == 5)
-            // {
-            //     MacUILib_printf("+");
-            // }
+            else if (i == (food->getFoodPos()).pos->y && j == (food->getFoodPos()).pos->x)
+            {
+                MacUILib_printf("%c", food->getFoodPos().symbol); // print food symbol
+            }
             else if (i == myPlayer->getPlayerPos().getObjPos().pos->y && j == myPlayer->getPlayerPos().getObjPos().pos->x)
             {
                 MacUILib_printf("%c", myPlayer->getPlayerPos().getObjPos().symbol);
@@ -116,4 +123,5 @@ void CleanUp(void)
     MacUILib_uninit();
     delete myMech;
     delete myPlayer;
+    delete food;
 }
