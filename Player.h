@@ -33,6 +33,10 @@ public:
 
     // More methods to be added here
 
+    bool checkFoodConsumption();
+    void increasePlayerLength();
+    bool checkSelfCollision();
+
 private:
     objPosArrayList *playerPos; // Upgrade this in iteration 3.
     enum Dir myDir;

@@ -52,13 +52,6 @@ void Player::updatePlayerDir()
             mainGameMechsRef->setExitTrue();
 
             break;
-            // case 27: // loseFlag:
-            //     mainGameMechsRef->setLoseFlag();
-            //     break;
-
-        case 49: // increment score
-            mainGameMechsRef->incrementScore();
-            break;
 
         case 'W':
         case 'w':
@@ -135,17 +128,56 @@ void Player::movePlayer()
         newPos.setObjPos(newX, newY, '*');
         playerPos->insertHead(newPos);
 
-        if (newX != food->getFoodPos().pos->x || newY != food->getFoodPos().pos->y)
+        if (!checkFoodConsumption())
         {
-            playerPos->removeTail();
+            playerPos->removeTail(); // food not consumed
         }
         else
         {
-
-            mainGameMechsRef->incrementScore();
-            food->generateFood(*playerPos);
+            increasePlayerLength(); // do not remove tail, increment score and generate new food.
         }
+    }
+
+    // collision
+    if (checkSelfCollision())
+    {
+        mainGameMechsRef->setLoseFlag();
     }
 }
 
-// More methods to be addedsa
+bool Player::checkFoodConsumption()
+{
+
+    if (playerPos->getHeadElement().getObjPos().pos->x != food->getFoodPos().pos->x || playerPos->getHeadElement().getObjPos().pos->y != food->getFoodPos().pos->y)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void Player::increasePlayerLength()
+{
+    mainGameMechsRef->incrementScore();
+    food->generateFood(*playerPos);
+}
+
+// More methods to be added
+
+bool Player::checkSelfCollision()
+{
+
+    bool flag = false;
+    for (int i = 1; i < playerPos->getSize(); i++)
+    {
+        if (playerPos->getHeadElement().getObjPos().pos->x == playerPos->getElement(i).getObjPos().pos->x && playerPos->getHeadElement().getObjPos().pos->y == playerPos->getElement(i).getObjPos().pos->y)
+        {
+            flag = true;
+            break;
+        }
+    }
+
+    return flag;
+}
+
+// TODO implement in movePlayer class()
