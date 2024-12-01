@@ -72,36 +72,28 @@ void Player::updatePlayerDir()
 
 void Player::movePlayer()
 {
-
+    //getting game board size from GameMech
     int boardSizeX = mainGameMechsRef->getBoardSizeX();
     int boardSizeY = mainGameMechsRef->getBoardSizeY();
-
-    int newX = playerPos->getHeadElement().pos->x;
-    int newY = playerPos->getHeadElement().pos->y;
-    objPos newPos(newX, newY, '*');
+    //get current x and y
+    int thisX = playerPos->getHeadElement().pos->x;
+    int thisY = playerPos->getHeadElement().pos->y;
+    objPos newPos(thisX, thisY, '*');
 
     // PPA3 Finite State Machine logic
     switch (myDir)
     {
     case UP:
-        // playerPos.pos->y = (playerPos.pos->y - 2 + (mainGameMechsRef->getBoardSizeY() - 2)) % (mainGameMechsRef->getBoardSizeY() - 2) + 1;
-
-        newY = (newY - 2 + (boardSizeY - 2)) % (boardSizeY - 2) + 1;
+        thisY = (thisY - 2 + (boardSizeY - 2)) % (boardSizeY - 2) + 1; //wrap around in the negative y direction
         break;
     case DOWN:
-        // playerPos.pos->y = (playerPos.pos->y % (mainGameMechsRef->getBoardSizeY() - 2)) + 1;
-
-        newY = (newY % (boardSizeY - 2)) + 1;
+        thisY = (thisY % (boardSizeY - 2)) + 1; //wrap around in the positive y direction
         break;
     case LEFT:
-        // playerPos.pos->x = (playerPos.pos->x - 2 + (mainGameMechsRef->getBoardSizeX() - 2)) % (mainGameMechsRef->getBoardSizeX() - 2) + 1;
-
-        newX = (newX - 2 + (boardSizeX - 2)) % (boardSizeX - 2) + 1;
+        thisX = (thisX - 2 + (boardSizeX - 2)) % (boardSizeX - 2) + 1; //wrap around in the negative x direction
         break;
     case RIGHT:
-        // playerPos.pos->x = (playerPos.pos->x % (mainGameMechsRef->getBoardSizeX() - 2)) + 1;
-
-        newX = (newX % (boardSizeX - 2)) + 1;
+        thisX = (thisX % (boardSizeX - 2)) + 1; //wrap around in the positive x direction
         break;
     case STOP:
     default:
@@ -110,8 +102,8 @@ void Player::movePlayer()
 
     if (myDir != STOP)
     {
-        newPos.setObjPos(newX, newY, '*');
-        playerPos->insertHead(newPos);
+        newPos.setObjPos(thisX, thisY, '*');
+        playerPos->insertHead(newPos); //insert head with new position
 
         if (!checkFoodConsumption())
         {
