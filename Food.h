@@ -12,9 +12,10 @@ using namespace std;
 class Food
 {
 private:
-  objPos foodPos; // holds most recent food position
+  objPos foodPos; //
   int boardSizeX;
   int boardSizeY;
+  objPosArrayList *foodBucket;
 
 public:
   Food();
@@ -23,7 +24,7 @@ public:
 
   void generateFood(objPosArrayList &arr);
 
-  objPos getFoodPos() const;
+  objPosArrayList *getFoodPos() const;
 
   // More methods should be added here getter for food position
 };

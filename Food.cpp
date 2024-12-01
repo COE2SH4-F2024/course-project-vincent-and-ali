@@ -1,66 +1,88 @@
 #include "Food.h"
+#include <iostream>
+using namespace std;
 
 Food::Food()
 {
+  foodBucket = new objPosArrayList;
   boardSizeX = 30; // default size according to manual
   boardSizeY = 15;
-  foodPos.symbol = '1';
 }
-
 Food::Food(GameMechs &m)
 {
   boardSizeX = m.getBoardSizeX();
   boardSizeY = m.getBoardSizeY();
-  foodPos.symbol = '1';
+  foodBucket = new objPosArrayList;
 }
 
 Food::~Food()
 {
+  delete foodBucket;
 }
 
 void Food::generateFood(objPosArrayList &arr)
 {
 
-  srand(time(NULL));
-
-  bool flag = true;
-  while (flag)
+  // remove previous positions before regenerating new ones
+  while (foodBucket->getSize() > 0)
   {
+    foodBucket->removeTail();
+  }
 
-    // generate x
-    int xCoord = rand() % (boardSizeX - 2) + 1;
+  for (int i = 0; i < 5; i++)
+  { // generate 5 food items
 
-    // generate y
-    int yCoord = rand() % (boardSizeY - 2) + 1;
-
-    // check if it matches player location
-
-    // we need size of array
-    for (int i = 0; i < arr.getSize(); i++)
+    srand(time(NULL));
+    bool flag = true;
+    while (flag)
     {
-      // check every position on the snake
 
-      if (arr.getElement(i).getObjPos().pos->x == xCoord && arr.getElement(i).getObjPos().pos->y == yCoord)
+      // generate x
+      int xCoord = rand() % (boardSizeX - 2) + 1;
+      // generate y
+      int yCoord = rand() % (boardSizeY - 2) + 1;
+
+      // check if it matches player location
+      for (int i = 0; i < arr.getSize(); i++)
       {
-        // part of the snake overlap with food
-        flag = false;
-        break;
+        if (arr.getElement(i).getObjPos().pos->x == xCoord && arr.getElement(i).getObjPos().pos->y == yCoord)
+        {
+          flag = false;
+          break;
+        }
       }
-    }
 
-    // regenerate the food item location
-    if (!flag)
-    {
-      continue;
-    }
+      // check if Xcoord and Ycoord overlap with other food positions in foodBcuket
+      for (int k = 0; k < foodBucket->getSize(); k++)
+      {
+        if (foodBucket->getElement(k).pos->x == xCoord && foodBucket->getElement(k).pos->y == yCoord)
+        {
+          flag = false;
+          break;
+        }
+      }
 
-    flag = true;
-    foodPos.pos->x = xCoord;
-    foodPos.pos->y = yCoord;
+      // regenerate the food item location if needed
+      if (!flag)
+      {
+        flag = true;
+        continue;
+      }
+
+      foodPos.pos->x = xCoord;
+      foodPos.pos->y = yCoord;
+      foodPos.symbol = (65 + i);
+      if (int(foodPos.symbol) > 68)
+      {
+        foodPos.symbol = '%'; // special food
+      }
+      foodBucket->insertTail(foodPos);
+      flag = false;
+    }
   }
 }
 
-objPos Food::getFoodPos() const
+objPosArrayList *Food::getFoodPos() const
 {
-  return foodPos;
+  return foodBucket;
 }

@@ -59,10 +59,7 @@ void GetInput(void)
 
 void RunLogic(void)
 {
-    if (myMech->getInput() == 50)
-    {
-        food->generateFood(*myPlayer->getPlayerPos());
-    }
+
     myPlayer->updatePlayerDir();
     myPlayer->movePlayer();
     exitFlag = myMech->getExitFlagStatus();
@@ -76,21 +73,17 @@ void RunLogic(void)
 void DrawScreen(void)
 {
     MacUILib_clearScreen();
+
     int i, j, k;
     for (i = 0; i < myMech->getBoardSizeY(); i++)
     {
         for (j = 0; j < myMech->getBoardSizeX(); j++)
         {
+
             if (i == 0 || i == myMech->getBoardSizeY() - 1 || j == 0 || j == myMech->getBoardSizeX() - 1)
             {
                 MacUILib_printf("#");
             }
-
-            else if (i == (food->getFoodPos()).pos->y && j == (food->getFoodPos()).pos->x)
-            {
-                MacUILib_printf("%c", food->getFoodPos().symbol); // print food symbol
-            }
-
             else
             {
                 bool isSnake = false;
@@ -103,25 +96,35 @@ void DrawScreen(void)
                         break;
                     }
                 }
+
                 if (!isSnake)
                 {
-                    MacUILib_printf(" ");
+
+                    bool flag = false;
+
+                    for (int m = 0; m < food->getFoodPos()->getSize(); m++)
+                    {
+                        if (i == food->getFoodPos()->getElement(m).pos->y && j == (food->getFoodPos()->getElement(m).pos->x))
+                        {
+                            MacUILib_printf("%c", food->getFoodPos()->getElement(m).getSymbol());
+
+                            flag = true;
+                            break;
+                        }
+                    }
+
+                    if (!flag)
+                    {
+                        MacUILib_printf(" ");
+                    }
                 }
             }
-
-            // else if (i == myPlayer->getPlayerPos()->getHeadElement().pos->y && j == myPlayer->getPlayerPos()->getHeadElement().pos->x)
-            // {
-            //     MacUILib_printf("%c", myPlayer->getPlayerPos()->getHeadElement().symbol);
-            // }
-            // else
-            // {
-            //     MacUILib_printf(" ");
-            // }
         }
         MacUILib_printf("\n");
     }
 
     MacUILib_printf("Score: %d \n", myMech->getScore());
+    MacUILib_printf("Special food '%%' grants 10 additonal points and no size increase \n");
 
     if (myMech->getLoseFlagStatus() == true)
     {

@@ -32,7 +32,7 @@ public:
     void movePlayer();
 
     // More methods to be added here
-
+    bool checkSpecialFoodConsumption(int i);
     bool checkFoodConsumption();
     void increasePlayerLength();
     bool checkSelfCollision();
@@ -44,6 +44,7 @@ private:
     // Need a reference to the Main Game Mechanisms
     GameMechs *mainGameMechsRef;
     Food *food;
+    bool specialFood;
 };
 
 #endif

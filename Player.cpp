@@ -6,25 +6,10 @@ Player::Player(GameMechs *thisGMRef, Food *foodObj)
     mainGameMechsRef = thisGMRef;
     food = foodObj;
     myDir = STOP;
-
-    // more actions to be included
-    // playerPos.pos->x = mainGameMechsRef->getBoardSizeX() / 2;
-    // playerPos.pos->y = mainGameMechsRef->getBoardSizeY() / 2;
-    // playerPos.symbol = '*';
-
+    specialFood = false;
     objPos start(mainGameMechsRef->getBoardSizeX() / 2, mainGameMechsRef->getBoardSizeY() / 2, '*');
     playerPos = new objPosArrayList;
     playerPos->insertHead(start);
-
-    // objPos second(start.pos->x + 1, start.pos->y, '*');
-    // objPos third(start.pos->x + 2, start.pos->y, '*');
-    // objPos forth(start.pos->x + 3, start.pos->y, '*');
-    // objPos fifth(start.pos->x + 4, start.pos->y, '*');
-    // playerPos->insertTail(second);
-    // playerPos->insertTail(third);
-    // playerPos->insertTail(forth);
-    // playerPos->insertTail(fifth);
-
     mainGameMechsRef->setScore((playerPos->getSize() - 1));
 }
 
@@ -134,7 +119,22 @@ void Player::movePlayer()
         }
         else
         {
-            increasePlayerLength(); // do not remove tail, increment score and generate new food.
+            if (specialFood)
+            {
+                playerPos->removeTail(); // no size increase
+                specialFood = false;
+
+                // increease score by 10
+                for (int i = 0; i < 10; i++)
+                {
+                    mainGameMechsRef->incrementScore();
+                    food->generateFood(*playerPos);
+                }
+            }
+            else
+            {
+                increasePlayerLength(); // do not remove tail, increment score and generate new food.
+            }
         }
     }
 
@@ -148,12 +148,17 @@ void Player::movePlayer()
 bool Player::checkFoodConsumption()
 {
 
-    if (playerPos->getHeadElement().getObjPos().pos->x != food->getFoodPos().pos->x || playerPos->getHeadElement().getObjPos().pos->y != food->getFoodPos().pos->y)
+    for (int i = 0; i < food->getFoodPos()->getSize(); i++)
     {
-        return false;
+
+        if (playerPos->getHeadElement().getObjPos().pos->x == food->getFoodPos()->getElement(i).pos->x && playerPos->getHeadElement().getObjPos().pos->y == food->getFoodPos()->getElement(i).pos->y)
+        {
+            specialFood = checkSpecialFoodConsumption(i);
+            return true;
+        }
     }
 
-    return true;
+    return false;
 }
 
 void Player::increasePlayerLength()
@@ -180,4 +185,11 @@ bool Player::checkSelfCollision()
     return flag;
 }
 
-// TODO implement in movePlayer class()
+bool Player::checkSpecialFoodConsumption(int i)
+{
+    if (food->getFoodPos()->getElement(i).symbol == '%')
+    {
+        return true;
+    }
+    return false;
+}
