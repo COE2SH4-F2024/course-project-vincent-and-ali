@@ -76,4 +76,9 @@ void GameMechs::clearInput()
     input = 0;
 }
 
+void GameMechs::setScore(int newScore)
+{
+    score = newScore;
+}
+
 // More methods should be added here

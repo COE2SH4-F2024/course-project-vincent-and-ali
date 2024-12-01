@@ -1,8 +1,10 @@
 #include "Player.h"
+#include "Food.h"
 
-Player::Player(GameMechs *thisGMRef)
+Player::Player(GameMechs *thisGMRef, Food *foodObj)
 {
     mainGameMechsRef = thisGMRef;
+    food = foodObj;
     myDir = STOP;
 
     // more actions to be included
@@ -22,6 +24,8 @@ Player::Player(GameMechs *thisGMRef)
     // playerPos->insertTail(third);
     // playerPos->insertTail(forth);
     // playerPos->insertTail(fifth);
+
+    mainGameMechsRef->setScore((playerPos->getSize() - 1));
 }
 
 Player::~Player()
@@ -30,7 +34,7 @@ Player::~Player()
     delete playerPos;
 }
 
-objPosArrayList* Player::getPlayerPos() const
+objPosArrayList *Player::getPlayerPos() const
 {
     // return the reference to the playerPos arrray list
     return playerPos;
@@ -48,9 +52,9 @@ void Player::updatePlayerDir()
             mainGameMechsRef->setExitTrue();
 
             break;
-        // case 27: // loseFlag:
-        //     mainGameMechsRef->setLoseFlag();
-        //     break;
+            // case 27: // loseFlag:
+            //     mainGameMechsRef->setLoseFlag();
+            //     break;
 
         case 49: // increment score
             mainGameMechsRef->incrementScore();
@@ -97,12 +101,13 @@ void Player::movePlayer()
     int newX = playerPos->getHeadElement().pos->x;
     int newY = playerPos->getHeadElement().pos->y;
     objPos newPos(newX, newY, '*');
+
     // PPA3 Finite State Machine logic
     switch (myDir)
     {
     case UP:
         // playerPos.pos->y = (playerPos.pos->y - 2 + (mainGameMechsRef->getBoardSizeY() - 2)) % (mainGameMechsRef->getBoardSizeY() - 2) + 1;
-        
+
         newY = (newY - 2 + (boardSizeY - 2)) % (boardSizeY - 2) + 1;
         break;
     case DOWN:
@@ -112,24 +117,35 @@ void Player::movePlayer()
         break;
     case LEFT:
         // playerPos.pos->x = (playerPos.pos->x - 2 + (mainGameMechsRef->getBoardSizeX() - 2)) % (mainGameMechsRef->getBoardSizeX() - 2) + 1;
-        
+
         newX = (newX - 2 + (boardSizeX - 2)) % (boardSizeX - 2) + 1;
         break;
     case RIGHT:
         // playerPos.pos->x = (playerPos.pos->x % (mainGameMechsRef->getBoardSizeX() - 2)) + 1;
-        
+
         newX = (newX % (boardSizeX - 2)) + 1;
         break;
     case STOP:
     default:
         break;
     }
+
     if (myDir != STOP)
     {
         newPos.setObjPos(newX, newY, '*');
         playerPos->insertHead(newPos);
-        playerPos->removeTail();
+
+        if (newX != food->getFoodPos().pos->x || newY != food->getFoodPos().pos->y)
+        {
+            playerPos->removeTail();
+        }
+        else
+        {
+
+            mainGameMechsRef->incrementScore();
+            food->generateFood(*playerPos);
+        }
     }
 }
 
-// More methods to be added
+// More methods to be addedsa

@@ -18,12 +18,12 @@ Food::~Food()
 {
 }
 
-void Food::generateFood(objPos blockOff)
+void Food::generateFood(objPosArrayList &arr)
 {
 
   srand(time(NULL));
 
-  int flag = 1;
+  bool flag = true;
   while (flag)
   {
 
@@ -34,12 +34,27 @@ void Food::generateFood(objPos blockOff)
     int yCoord = rand() % (boardSizeY - 2) + 1;
 
     // check if it matches player location
-    if (blockOff.pos->x == xCoord && blockOff.pos->y == yCoord)
+
+    // we need size of array
+    for (int i = 0; i < arr.getSize(); i++)
+    {
+      // check every position on the snake
+
+      if (arr.getElement(i).getObjPos().pos->x == xCoord && arr.getElement(i).getObjPos().pos->y == yCoord)
+      {
+        // part of the snake overlap with food
+        flag = false;
+        break;
+      }
+    }
+
+    // regenerate the food item location
+    if (!flag)
     {
       continue;
     }
 
-    flag = 0;
+    flag = true;
     foodPos.pos->x = xCoord;
     foodPos.pos->y = yCoord;
   }

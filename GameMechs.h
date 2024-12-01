@@ -29,6 +29,7 @@ public:
     void setExitTrue();
     bool getLoseFlagStatus() const;
     void setLoseFlag();
+    void setScore(int newScore);
 
     char getInput() const;
     void setInput(char this_input);

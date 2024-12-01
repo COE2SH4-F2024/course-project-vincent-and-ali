@@ -21,7 +21,8 @@ public:
   Food(GameMechs &m);
   ~Food();
 
-  void generateFood(objPos blockOff); // blockOff = playersPosition so avoid generating here // generate foodpositions
+  void generateFood(objPosArrayList &arr);
+
   objPos getFoodPos() const;
 
   // More methods should be added here getter for food position
